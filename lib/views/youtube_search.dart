@@ -16,8 +16,6 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  // final _searchController = TextEditingController();
-  List<String> _searchHistory = [];
   List<dynamic> _searchResults = [];
 
   @override
@@ -41,13 +39,6 @@ class _SearchPageState extends State<SearchPage> {
   void _onSearchSubmitted(String query) {
     setState(() {
       Globals.searchHistory.insert(0, query);
-    });
-    _saveSearchHistory();
-  }
-
-  void _clearSearchHistory() {
-    setState(() {
-      Globals.searchHistory.clear();
     });
     _saveSearchHistory();
   }
@@ -157,7 +148,6 @@ class _SearchPageState extends State<SearchPage> {
                   setState(() {
                     _onSearchSubmitted;
                     Globals.searchResults.add(query);
-                    print(Globals.searchResults);
                     _searchResults = items;
                   });
                 },
