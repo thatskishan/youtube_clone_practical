@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_clone/models/globals.dart';
-import 'package:youtube_clone/views/search_history.dart';
+import 'package:youtube_clone/views/history.dart';
 import 'package:youtube_clone/views/youtube_video_player.dart';
 
 class SearchPage extends StatefulWidget {
@@ -15,8 +16,41 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final _searchController = TextEditingController();
+  // final _searchController = TextEditingController();
+  List<String> _searchHistory = [];
   List<dynamic> _searchResults = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSearchHistory();
+  }
+
+  void _loadSearchHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      Globals.searchHistory = prefs.getStringList('search_history') ?? [];
+    });
+  }
+
+  void _saveSearchHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('search_history', Globals.searchHistory);
+  }
+
+  void _onSearchSubmitted(String query) {
+    setState(() {
+      Globals.searchHistory.insert(0, query);
+    });
+    _saveSearchHistory();
+  }
+
+  void _clearSearchHistory() {
+    setState(() {
+      Globals.searchHistory.clear();
+    });
+    _saveSearchHistory();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +88,7 @@ class _SearchPageState extends State<SearchPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SearchHistory(),
+                  builder: (context) => SearchScreen(),
                 ),
               );
             },
@@ -92,7 +126,7 @@ class _SearchPageState extends State<SearchPage> {
                 style: GoogleFonts.poppins(
                   color: Colors.white,
                 ),
-                controller: _searchController,
+                controller: Globals.searchController,
                 decoration: InputDecoration(
                   hintText: 'Search',
                   hintStyle: GoogleFonts.poppins(
@@ -101,6 +135,7 @@ class _SearchPageState extends State<SearchPage> {
                   border: InputBorder.none,
                 ),
                 onSubmitted: (query) async {
+                  _onSearchSubmitted(query);
                   // Perform the search query
                   final response = await http.get(
                     Uri.https(
@@ -120,6 +155,7 @@ class _SearchPageState extends State<SearchPage> {
                   final Map<String, dynamic> data = jsonDecode(response.body);
                   final List<dynamic> items = data['items'];
                   setState(() {
+                    _onSearchSubmitted;
                     Globals.searchResults.add(query);
                     print(Globals.searchResults);
                     _searchResults = items;
@@ -140,7 +176,6 @@ class _SearchPageState extends State<SearchPage> {
                     video['snippet']['thumbnails']['default']['url'];
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to the video player page when a video is tapped
                     Navigator.push(
                       context,
                       MaterialPageRoute(
