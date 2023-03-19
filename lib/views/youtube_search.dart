@@ -137,7 +137,7 @@ class _SearchPageState extends State<SearchPage> {
                         'q': query,
                         'type': 'video',
                         'maxResults': '5',
-                        'key': 'AIzaSyCMtXP_hC_mQT2L9EG_dAh6ieqpiztbmKI',
+                        'key': 'YOUR API KEY',
                       },
                     ),
                   );
