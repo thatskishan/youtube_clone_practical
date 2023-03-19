@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_clone/models/globals.dart';
-import 'package:youtube_clone/views/history.dart';
+import 'package:youtube_clone/views/search_history.dart';
 import 'package:youtube_clone/views/youtube_video_player.dart';
 
 class SearchPage extends StatefulWidget {
